@@ -1,10 +1,1 @@
-{
-  "name": "Local Movie Server",
-  "version": "1.0.0",
-  "providers": [
-    {
-      "name": "LocalServer",
-      "file": "providers/localserver.js"
-    }
-  ]
-}
+{"providers": [{"name": "Nuvio", "type": "provider", "description": "Nuvio provider description", "endpoint": "https://api.nuvio.com"}]}
