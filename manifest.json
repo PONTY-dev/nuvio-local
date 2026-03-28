@@ -1,0 +1,10 @@
+{
+  "name": "Local Movie Server",
+  "version": "1.0.0",
+  "providers": [
+    {
+      "name": "LocalServer",
+      "file": "providers/localserver.js"
+    }
+  ]
+}
