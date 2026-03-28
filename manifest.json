@@ -1,6 +1,19 @@
 {
-  "name": "DhakaFlix",
-  "type": "local",
-  "script": "dhakaflix.js",
-  "description": "Local DhakaFlix provider for movies and TV series"
+  "name": "DhakaFlix Local",
+  "version": "3.0.0",
+  "scrapers": [
+    {
+      "id": "dhakaflix",
+      "name": "DhakaFlix",
+      "description": "Stream movies & TV shows from your DhakaFlix local media server",
+      "version": "3.0.0",
+      "author": "PONTY-dev",
+      "supportedTypes": ["movie", "tv"],
+      "filename": "providers/dhakaflix.js",
+      "enabled": true,
+      "formats": ["mkv", "mp4", "avi"],
+      "logo": "https://img.icons8.com/fluency/96/video-file.png",
+      "contentLanguage": ["en", "hi", "bn", "ta", "te", "ko"]
+    }
+  ]
 }
