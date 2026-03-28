@@ -9,7 +9,7 @@
       "version": "3.0.0",
       "author": "PONTY-dev",
       "supportedTypes": ["movie", "tv"],
-      "filename": "providers/dhakaflix.js",
+      "filename": "dhakaflix.js",
       "enabled": true,
       "formats": ["mkv", "mp4", "avi"],
       "logo": "https://img.icons8.com/fluency/96/video-file.png",
