@@ -1,0 +1,15 @@
+{
+  "name": "nuvio-providers",
+  "version": "1.0.0",
+  "description": "Nuvio stream providers",
+  "scripts": {
+    "build": "node build.js",
+    "build:watch": "node build.js --watch"
+  },
+  "dependencies": {
+    "axios": "^1.6.0",
+    "cheerio-without-node-native": "^1.0.1",
+    "crypto-js": "^4.2.0",
+    "esbuild": "^0.20.0"
+  }
+}
