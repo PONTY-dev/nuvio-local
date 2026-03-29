@@ -1,14 +1,12 @@
-{
-  "providers": [
-    {
-      "id": "moviemazic",
-      "name": "MovieMazic",
-      "description": "BDIX streaming via MovieMazic CDN",
-      "version": "1.0.0",
-      "author": "PONTY",
-      "filename": "providers/moviemazic.js",
-      "supportedTypes": ["movie", "tv"],
-      "enabled": true
-    }
-  ]
-}
+[
+  {
+    "id": "moviemazic",
+    "name": "MovieMazic",
+    "description": "BDIX streaming via MovieMazic CDN",
+    "version": "1.0.0",
+    "author": "PONTY",
+    "filename": "providers/moviemazic.js",
+    "supportedTypes": ["movie", "tv"],
+    "enabled": true
+  }
+]
