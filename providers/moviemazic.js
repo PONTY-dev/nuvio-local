@@ -63,13 +63,17 @@ function getStreams(tmdbId, media) {
       console.log('[MovieMazic] URL: ' + url);
 
       return [
-        {
-          name: 'MovieMazic',
-          title: label,
-          url: url,
-          quality: 'BDIX',
-        },
-      ];
+  {
+    name: 'MovieMazic',
+    title: label,
+    url: url,
+    quality: 'BDIX',
+    headers: {
+      'Referer': 'http://moviemazic.xyz/',
+      'Origin': 'http://moviemazic.xyz'
+    }
+  }
+];
     })
     .catch(function (e) {
       console.error('[MovieMazic] Error: ' + e.message);
