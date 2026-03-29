@@ -1,0 +1,19 @@
+{
+  "name": "DiscoveryFTP Movies",
+  "version": "1.0.0",
+  "scrapers": [
+    {
+      "id": "discoveryftp",
+      "name": "DiscoveryFTP",
+      "description": "Movies from dflix.discoveryftp.net",
+      "version": "1.0.0",
+      "author": "You",
+      "supportedTypes": ["movie"],
+      "filename": "discoveryftp.js",
+      "enabled": true,
+      "formats": ["mkv", "mp4", "avi"],
+      "logo": "https://img.icons8.com/fluency/96/movie.png",
+      "contentLanguage": ["en", "hi"]
+    }
+  ]
+}
