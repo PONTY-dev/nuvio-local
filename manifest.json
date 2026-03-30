@@ -23,8 +23,8 @@
     {
       "id": "dhakaflix_unified",
       "name": "DhakaFlix (All Servers)",
-      "description": "Unified provider for DhakaFlix servers 7, 9, 12, 14 (movies + TV series) using JSON API",
-      "version": "3.1.0",
+      "description": "Unified provider for DhakaFlix servers 7, 9, 12, 14 (movies + TV series) using HTML parsing",
+      "version": "3.2.0",
       "author": "Redowan / Adapted for Nuvio",
       "filename": "providers/dhakaflix.js",
       "supportedTypes": ["movie", "tv"],
