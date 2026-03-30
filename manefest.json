@@ -1,0 +1,14 @@
+{
+  "scrapers": [
+    {
+      "id": "dhakaflix_test",
+      "name": "DhakaFlix Test",
+      "description": "Hardcoded test for 12 Angry Men",
+      "version": "1.0.0",
+      "author": "Test",
+      "filename": "providers/dhakaflix_test.js",
+      "supportedTypes": ["movie"],
+      "enabled": true
+    }
+  ]
+}
