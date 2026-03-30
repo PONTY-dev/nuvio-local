@@ -1,0 +1,13 @@
+{
+  "scrapers": [
+    {
+      "id": "test",
+      "name": "Test",
+      "description": "Test",
+      "version": "1.0",
+      "filename": "test.js",
+      "supportedTypes": ["movie"],
+      "enabled": true
+    }
+  ]
+}
