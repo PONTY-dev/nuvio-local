@@ -1,11 +1,8 @@
-// providers/dakaflix.js
-// DhakaFlix BDIX – relies on media object for title/year (no TMDB call)
-
+// providers/dakaflix.js – with detailed logging
 var M_HOST = 'http://172.16.50.7';
 var TV_HOST = 'http://172.16.50.12';
 var UA = 'Mozilla/5.0 (Linux; Android 10; Mobile) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Mobile Safari/537.36';
 
-// Movie folders (adjust as needed)
 var MOVIE_FOLDERS = [
   '/DHAKA-FLIX-7/English%20Movies/',
   '/DHAKA-FLIX-7/English%20Movies%20(1080p)/',
@@ -18,7 +15,6 @@ var MOVIE_FOLDERS = [
   '/DHAKA-FLIX-7/3D%20Movies/'
 ];
 
-// TV folder logic (same as before)
 function getTvFolder(title) {
   var c = title.trim().charAt(0).toUpperCase();
   if (c >= '0' && c <= '9') return '/DHAKA-FLIX-12/TV-WEB-Series/TV%20Series%20%E2%98%85%200%20%E2%80%94%209/';
@@ -28,6 +24,7 @@ function getTvFolder(title) {
 }
 
 function fetchHtml(url) {
+  console.log('[DEBUG] Fetching:', url);
   return fetch(url, { headers: { 'User-Agent': UA } }).then(r => r.text());
 }
 
@@ -35,6 +32,224 @@ function getHrefs(html) {
   var results = [];
   var re = /href="([^"?#][^"]*)"/g;
   var m;
+  while ((m = re.exec(html)) !== null) {
+    var h = m[1];
+    if (h === '../' || h === '/') continue;
+    results.push(h);
+  }
+  return results;
+}
+
+function normalize(s) {
+  return s.toLowerCase().replace(/[^a-z0-9]/g, '');
+}
+
+function getYearSubfolder(year) {
+  return parseInt(year) <= 1994 ? '(1960-1994)' : '(' + year + ')';
+}
+
+function toUrl(host, href) {
+  if (!href) return null;
+  if (href.startsWith('http')) return href;
+  return host + (href.startsWith('/') ? href : '/' + href);
+}
+
+function findMatch(hrefs, normTitle, year) {
+  console.log('[DEBUG] Searching in hrefs:', hrefs);
+  for (var i = 0; i < hrefs.length; i++) {
+    var dec = decodeURIComponent(hrefs[i]);
+    var norm = normalize(dec);
+    if (norm.includes(normTitle) && dec.includes(year)) {
+      console.log('[DEBUG] Found match (title+year):', hrefs[i]);
+      return hrefs[i];
+    }
+  }
+  for (var j = 0; j < hrefs.length; j++) {
+    var dec2 = decodeURIComponent(hrefs[j]);
+    if (normalize(dec2).includes(normTitle)) {
+      console.log('[DEBUG] Found match (title only):', hrefs[j]);
+      return hrefs[j];
+    }
+  }
+  console.log('[DEBUG] No match found');
+  return null;
+}
+
+function findVideo(hrefs) {
+  var exts = ['.mkv', '.mp4', '.avi'];
+  for (var i = 0; i < hrefs.length; i++) {
+    var lower = hrefs[i].toLowerCase();
+    if (exts.some(ext => lower.includes(ext))) {
+      console.log('[DEBUG] Found video:', hrefs[i]);
+      return hrefs[i];
+    }
+  }
+  console.log('[DEBUG] No video found');
+  return null;
+}
+
+function searchInFolder(host, folderPath, normTitle, year) {
+  var url = host + folderPath;
+  var hasYearSub = folderPath.includes('English%20Movies');
+  var listUrl = hasYearSub ? url + encodeURIComponent(getYearSubfolder(year)) + '/' : url;
+  console.log('[DEBUG] Checking folder:', listUrl);
+  return fetchHtml(listUrl).then(html => {
+    var hrefs = getHrefs(html);
+    var matched = findMatch(hrefs, normTitle, year);
+    if (!matched) return null;
+    return { host, href: matched };
+  }).catch(err => {
+    console.error('[DEBUG] Fetch failed for', listUrl, err);
+    return null;
+  });
+}
+
+function getVideoFromFolder(host, folderHref) {
+  var folderUrl = toUrl(host, folderHref);
+  if (!folderUrl.endsWith('/')) folderUrl += '/';
+  console.log('[DEBUG] Getting video from:', folderUrl);
+  return fetchHtml(folderUrl).then(html => {
+    var hrefs = getHrefs(html);
+    var videoHref = findVideo(hrefs);
+    return videoHref ? toUrl(host, videoHref) : null;
+  }).catch(err => {
+    console.error('[DEBUG] Fetch failed for', folderUrl, err);
+    return null;
+  });
+}
+
+function findSeasonFolder(hrefs, season) {
+  var seasonNum = parseInt(season);
+  for (var i = 0; i < hrefs.length; i++) {
+    var dec = decodeURIComponent(hrefs[i]);
+    if (!hrefs[i].endsWith('/')) continue;
+    var match = dec.match(/season\s*(\d+)/i);
+    if (match && parseInt(match[1]) === seasonNum) return hrefs[i];
+    if (/^\d+\/$/.test(dec) && parseInt(dec) === seasonNum) return hrefs[i];
+  }
+  return null;
+}
+
+function findEpisodeFile(hrefs, episode) {
+  var episodeNum = parseInt(episode);
+  var patterns = [
+    new RegExp(`s\\d+e${episodeNum < 10 ? '0' + episodeNum : episodeNum}`, 'i'),
+    new RegExp(`e${episodeNum < 10 ? '0' + episodeNum : episodeNum}`, 'i'),
+    new RegExp(`\\b${episodeNum}\\b`),
+    new RegExp(`episode\\s*${episodeNum}`, 'i')
+  ];
+  for (var i = 0; i < hrefs.length; i++) {
+    var dec = decodeURIComponent(hrefs[i]);
+    var lower = dec.toLowerCase();
+    if (patterns.some(p => p.test(lower))) return hrefs[i];
+  }
+  return null;
+}
+
+function getTvStreamUrl(host, showHref, season, episode) {
+  var showUrl = toUrl(host, showHref);
+  if (!showUrl.endsWith('/')) showUrl += '/';
+  console.log('[DEBUG] TV show folder:', showUrl);
+  return fetchHtml(showUrl).then(html => {
+    var hrefs = getHrefs(html);
+    var seasonFolder = findSeasonFolder(hrefs, season);
+    if (!seasonFolder) {
+      console.log('[DEBUG] No season folder found');
+      return null;
+    }
+    console.log('[DEBUG] Season folder:', seasonFolder);
+    var seasonUrl = toUrl(host, seasonFolder);
+    if (!seasonUrl.endsWith('/')) seasonUrl += '/';
+    return fetchHtml(seasonUrl).then(seasonHtml => {
+      var seasonHrefs = getHrefs(seasonHtml);
+      var episodeFile = findEpisodeFile(seasonHrefs, episode);
+      return episodeFile ? toUrl(host, episodeFile) : null;
+    });
+  }).catch(err => {
+    console.error('[DEBUG] TV fetch error:', err);
+    return null;
+  });
+}
+
+function searchAllFolders(folders, host, normTitle, year, index) {
+  if (index >= folders.length) return Promise.resolve(null);
+  return searchInFolder(host, folders[index], normTitle, year).then(result => {
+    if (result) return result;
+    return searchAllFolders(folders, host, normTitle, year, index + 1);
+  });
+}
+
+function getStreams(tmdbId, media) {
+  var title = media && media.title;
+  var year = media && media.year;
+  var type = media && media.type === 'tv' ? 'tv' : 'movie';
+  var season = media && media.season ? parseInt(media.season) : 1;
+  var episode = media && media.episode ? parseInt(media.episode) : 1;
+  var isMovie = type === 'movie';
+
+  console.log('[DEBUG] getStreams called with:', { tmdbId, media, title, year, type });
+
+  if (!title || !year) {
+    console.error('[DhakaFlix] Missing title or year in media object');
+    return Promise.resolve([]);
+  }
+
+  var normTitle = normalize(title);
+  var label = isMovie
+    ? `${title} (${year})`
+    : `${title} S${season < 10 ? '0' + season : season}E${episode < 10 ? '0' + episode : episode}`;
+
+  console.log('[DEBUG] Searching for:', { title, year, normTitle, label });
+
+  var searchPromise;
+  if (isMovie) {
+    searchPromise = searchAllFolders(MOVIE_FOLDERS, M_HOST, normTitle, year, 0);
+  } else {
+    var tvFolder = getTvFolder(title);
+    console.log('[DEBUG] TV folder base:', tvFolder);
+    searchPromise = searchInFolder(TV_HOST, tvFolder, normTitle, year);
+  }
+
+  return searchPromise.then(result => {
+    if (!result) {
+      console.log('[DEBUG] No folder found for', title);
+      return [];
+    }
+    console.log('[DEBUG] Found folder:', result);
+    if (isMovie) {
+      return getVideoFromFolder(result.host, result.href).then(streamUrl => {
+        if (!streamUrl) {
+          console.log('[DEBUG] No video found in folder');
+          return [];
+        }
+        console.log('[DEBUG] Final stream URL:', streamUrl);
+        return [{
+          name: 'DhakaFlix',
+          title: label,
+          url: streamUrl,
+          quality: 'BDIX',
+          headers: { 'User-Agent': UA }
+        }];
+      });
+    } else {
+      return getTvStreamUrl(result.host, result.href, season, episode).then(streamUrl => {
+        if (!streamUrl) return [];
+        return [{
+          name: 'DhakaFlix',
+          title: label,
+          url: streamUrl,
+          quality: 'BDIX',
+          headers: { 'User-Agent': UA }
+        }];
+      });
+    }
+  }).catch(e => {
+    console.error('[DhakaFlix] Error:', e.message, e);
+    return [];
+  });
+}
+
+module.exports = { getStreams };  var m;
   while ((m = re.exec(html)) !== null) {
     var h = m[1];
     if (h === '../' || h === '/') continue;
