@@ -9,6 +9,16 @@
       "filename": "providers/moviemazic.js",
       "supportedTypes": ["movie", "tv"],
       "enabled": true
+    },
+    {
+      "id": "dakaflix",
+      "name": "DhakaFlix",
+      "description": "BDIX DhakaFlix server 172.16.50.7",
+      "version": "1.0.0",
+      "author": "PONTY",
+      "filename": "providers/dakaflix.js",
+      "supportedTypes": ["movie"],
+      "enabled": true
     }
   ]
 }
