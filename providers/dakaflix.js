@@ -1,40 +1,8 @@
-// providers/dakaflix.js
-// DhakaFlix BDIX provider for Nuvio
-//
-// TV STRUCTURE  →  http://172.16.50.12/DHAKA-FLIX-12/TV-WEB-Series/
-//   TV Series ★ 0 — 9/
-//   TV Series ♥ A — L/
-//   TV Series ♦ M — R/
-//   TV Series ♦ S — Z/
-//     Show Name (TV Series 2024– ) 1080p [Dual Audio]/
-//       Season 1/
-//         ShowName.S01E01.mkv
-
-var TMDB_KEY = 'fe4a8b69f7867dea332c4495faeab4c6';
-var TMDB_BASE = 'https://api.themoviedb.org/3';
-var TV_BASE   = 'http://172.16.50.12/DHAKA-FLIX-12/TV-WEB-Series/';
-
-// Pre-encoded range bucket folder names (Unicode-safe for Hermes)
-var TV_RANGES = [
-  { test: function(c){ return c>='0'&&c<='9'; }, path: 'TV%20Series%20%E2%98%85%20%200%20%20%E2%80%94%20%209/' },
-  { test: function(c){ return c>='A'&&c<='L'; }, path: 'TV%20Series%20%E2%99%A5%20A%20%E2%80%94%20L/'          },
-  { test: function(c){ return c>='M'&&c<='R'; }, path: 'TV%20Series%20%E2%99%A6%20M%20%E2%80%94%20R/'          },
-  { test: function(c){ return c>='S'&&c<='Z'; }, path: 'TV%20Series%20%E2%99%A6%20S%20%E2%80%94%20Z/'          }
-];
-
-function getRangeUrl(title) {
-  var key = title.replace(/^(the|a|an)\s+/i, '').trim().charAt(0).toUpperCase();
-  for (var i = 0; i < TV_RANGES.length; i++) {
-    if (TV_RANGES[i].test(key)) return TV_BASE + TV_RANGES[i].path;
-  }
-  return TV_BASE + TV_RANGES[1].path;
+function getStreams(tmdbId, media) {
+  console.error('[DhakaFlix] id=' + tmdbId + ' media=' + JSON.stringify(media));
+  return [];
 }
-
-// ── Helpers ──────────────────────────────────────────────────────────────────
-
-function parseDir(html) {
-  var out = [], re = /href=["']([^"'?#]+)["']/gi, m;
-  while ((m = re.exec(html)) !== null) {
+module.exports = { getStreams: getStreams };  while ((m = re.exec(html)) !== null) {
     var h = m[1];
     if (h==='../'||h==='./'||h.indexOf('://')!==-1||h[0]==='?'||h[0]==='/') continue;
     out.push(h);
