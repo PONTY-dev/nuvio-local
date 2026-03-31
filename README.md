@@ -1,44 +1,21 @@
-# nuvio-providers
+# DhakaFlix Nuvio Provider
 
-Stream providers for the Nuvio app.
+Adds your local DhakaFlix media server as a stream source inside the Nuvio app.
 
-## Structure
+## Features
 
-```
-nuvio-providers/
-├── providers/          # Ready-to-use provider files
-│   └── moviemazic.js
-├── src/                # Source files for multi-file providers
-├── manifest.json       # Provider registry
-├── build.js            # Build script
-└── package.json
-```
+- Stream movies from `http://172.16.50.7/DHAKA-FLIX-7/English Movies/`
+- Stream TV series from `http://172.16.50.12/DHAKA-FLIX-12/TV-WEB-Series/`
+- Automatic folder matching using TMDB metadata
+- Supports both movie and TV show playback
 
-## Providers
+## Installation
 
-| Provider | Type | Source |
-|----------|------|--------|
-| MovieMazic | Movies + TV | BDIX CDN |
+1. **Download the plugin**  
+   Clone or download this repository to your device.
 
-## Setup
+2. **Copy to Nuvio plugin folder**  
+   - Android: `/storage/emulated/0/Nuvio/plugins/` (or the folder shown in Nuvio settings)  
+   - Other platforms: refer to Nuvio documentation.
 
-```bash
-npm install
-```
-
-## Building (src providers only)
-
-```bash
-# Build all
-node build.js
-
-# Build specific
-node build.js myprovider
-
-# Watch mode
-npm run build:watch
-```
-
-## Adding to Nuvio
-
-Point Nuvio to this repo's `manifest.json`.
+   The folder structure should be:
