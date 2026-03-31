@@ -29,6 +29,16 @@
       "filename": "providers/dakaflix-tv.js",
       "supportedTypes": ["tv"],
       "enabled": true
+    },   
+    {
+      "id": "dakaflix",
+      "name": "DhakaFlix",
+      "description": "BDIX DhakaFlix - Movies & TV Series",
+      "version": "1.0.0",
+      "author": "PONTY",
+      "filename": "providers/dakaflix.js",
+      "supportedTypes": ["movie", "tv"],
+      "enabled": true
     }
   ]
 }
