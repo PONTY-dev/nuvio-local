@@ -57,6 +57,7 @@ function qualLabel(f) {
   if (/1080p/i.test(f)) return '1080p';
   if (/720p/i.test(f))  return '720p';
   if (/480p/i.test(f))  return '480p';
+  if (/web|webrip|web-dl/i.test(f)) return 'WEB'; // Added WEB detection
   return 'SD';
 }
 
@@ -90,8 +91,8 @@ function getMovieStreams(title, year) {
           if (!files.length) return [];
           return files.map(function(f) {
             return {
-              name:    'DhakaFlix ' + qualLabel(f),
-              title:   title + ' (' + year + ')',
+              name:    'DhakaFlix ' + qualLabel(f) + ' - BDIX', // Formatted to match image
+              title:   title + ' (' + year + ') BDIX',          // Formatted to match image
               url:     movieUrl + f,
               quality: 'BDIX',
               headers: { 'User-Agent': UA }
@@ -149,9 +150,10 @@ function getTvStreams(title, season, episode) {
           });
           var epFile = files.find(function(f){ return epRe.test(decode(f)); });
           if (!epFile) throw new Error(ep+' not found');
+          
           return [{
-            name:    'DhakaFlix TV',
-            title:   title+' '+ep,
+            name:    'DhakaFlix TV - BDIX',             // Match formatting
+            title:   title + ' ' + ep + ' BDIX',        // Match formatting
             url:     seasonUrl + epFile,
             quality: 'BDIX',
             headers: { 'User-Agent': UA }
@@ -192,3 +194,4 @@ function getStreams(tmdbId, media) {
 }
 
 module.exports = { getStreams: getStreams };
+    
