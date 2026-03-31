@@ -1,0 +1,15 @@
+{
+  "scrapers": [
+    {
+      "id": "dhakaflix",
+      "name": "DhakaFlix",
+      "description": "BDIX DhakaFlix - Movies & TV Series",
+      "version": "1.0.0",
+      "author": "PONTY",
+      "filename": "providers/dhakaflix.js",
+      "supportedTypes": ["movie", "tv"],
+      "type": "local",
+      "enabled": true
+    }
+  ]
+}
