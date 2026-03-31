@@ -1,15 +1,24 @@
 {
-  "name": "DhakaFlix",
-  "description": "Stream movies and TV shows from local BDIX DhakaFlix servers",
-  "version": 1,
-  "author": "Ponty",
-  "language": "en",
-  "baseUrl": "http://172.16.50.7/",
-  "iconUrl": "https://i.imgur.com/8yKQF6F.png",
-  "script": "dakaflix.js",
-  "type": "provider",
-  "id": "dhakaflix-provider",
-  "supportedTypes": ["movie", "tv"],
-  "requires": [],
-  "priority": 1
+  "scrapers": [
+    {
+      "id": "moviemazic",
+      "name": "MovieMazic",
+      "description": "BDIX streaming via MovieMazic CDN",
+      "version": "1.0.0",
+      "author": "PONTY",
+      "filename": "providers/moviemazic.js",
+      "supportedTypes": ["movie", "tv"],
+      "enabled": true
+    },
+    {
+      "id": "dakaflix",
+      "name": "DhakaFlix",
+      "description": "BDIX DhakaFlix - Movies & TV Series",
+      "version": "1.0.0",
+      "author": "PONTY",
+      "filename": "providers/dakaflix.js",
+      "supportedTypes": ["movie", "tv"],
+      "enabled": true
+    }
+  ]
 }
